@@ -1,0 +1,434 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://jsonplaceholder.typicode.com/posts/{{$json.id}}/comments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        224
+      ],
+      "id": "70f91fec-62b0-4b16-9d63-1418971969f7",
+      "name": "Get Comments",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "executeOnce": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        656,
+        208
+      ],
+      "id": "ed1a3074-3bad-4dad-8f91-21faa8c14b0b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "ids",
+        "options": {
+          "destinationFieldName": "id"
+        }
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        416,
+        208
+      ],
+      "id": "b58925db-25ce-43a6-ba1c-33e6a3b18ecf",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5e1ea4c-f85f-4227-b354-4e6e69d6ae07",
+              "name": "ids",
+              "value": "={{ Array.from({ length: 10 }, (_, i) => i + 1) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        208
+      ],
+      "id": "598aecbc-3303-4fad-8660-1f119391b29c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        208
+      ],
+      "id": "f0eb457b-2c72-4db5-a596-7cd6811bcce3",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        656,
+        416
+      ],
+      "id": "e4698101-1aad-43c6-ae6a-4fe823c0d461",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "url": "https://jsonplaceholder.typicode.com/posts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        432
+      ],
+      "id": "19e5a49b-9543-4631-9f80-d7b49a668759",
+      "name": "Get Posts",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1392,
+        208
+      ],
+      "id": "32905340-4622-424d-850b-a15217072730",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst comments = {};\nconst details = {};\n\n$input.all().forEach(item => {\n    const pureItem = item.json;\n    const [fullKey] = Object.keys(pureItem);\n    const parts = fullKey.split('_');\n    const prefix = parts.slice(0, 2).join('_');\n    const postfix = parts[2]; // either COMMENTS or DETAILS\n\n    if (postfix === 'COMMENTS') {\n        comments[prefix] = pureItem[fullKey];\n    } else if (postfix === 'DETAILS') {\n        details[prefix] = { ...pureItem[fullKey] };\n    }\n});\n\nconst result = Object.entries(details).map(([prefix, detailData]) => {\n    if (comments[prefix]) {\n        detailData.comments = comments[prefix];\n    }\n    return detailData;\n});\nconsole.log('ssss',result);\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        416
+      ],
+      "id": "4ee7db1b-fa02-4256-b559-d0c98704e23f",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wgPfYk8TYXl1eX2gaC4YW4by9wpTnRatFuG7tV8ztDI",
+          "mode": "list",
+          "cachedResultName": "n8n-task",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wgPfYk8TYXl1eX2gaC4YW4by9wpTnRatFuG7tV8ztDI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wgPfYk8TYXl1eX2gaC4YW4by9wpTnRatFuG7tV8ztDI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "record_id": "={{ $json.record_id }}",
+            "content": "={{ $json.content }}",
+            "metadata": "={{ $json.metadata }}",
+            "analytics": "={{ $json.analytics }}",
+            "comments": "={{ $json.comments }}"
+          },
+          "matchingColumns": [
+            "record_id"
+          ],
+          "schema": [
+            {
+              "id": "record_id",
+              "displayName": "record_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "metadata",
+              "displayName": "metadata",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "analytics",
+              "displayName": "analytics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "comments",
+              "displayName": "comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1568,
+        416
+      ],
+      "id": "4cd41b59-c6ec-4470-aa77-f2a0a6c6347f",
+      "name": "Append or update row in sheet",
+      "retryOnFail": false,
+      "maxTries": 2,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "*******",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "function toTitleCase(str) {\n  return str\n    .toLowerCase()\n    .replace(/\\s+/g, ' ')\n    .trim()\n    .split(' ')\n    .map(word => word.charAt(0).toUpperCase() + word.slice(1))\n    .join(' ');\n}\n\nfunction getKeywords(str, count) {\n  return str\n    .toLowerCase()\n    .split(/\\s+/)\n    .slice(0, count);\n}\n\nconst id = $json.id || 0;\nconst title = $json.title || '';\nconst body = $json.body || '';\n\nconst cleanedTitle = toTitleCase(title);\nconst cleanedBody = body.replace(/\\s+/g, ' ').trim();\nconst shortBody = cleanedBody.length > 100 ? cleanedBody.slice(0, 100) + '...' : cleanedBody.slice(0, 100);\n\nconst wordCount = cleanedBody.length > 0 ? cleanedBody.split(/\\s+/).length : 0;\nconst category = wordCount < 20 ? 'short' : wordCount <= 40 ? 'medium' : 'long';\nconst recordId = `POST_${String(id).padStart(3, '0')}`;\nconst recordKey = `${recordId}_DETAILS`;\nconst keywords = getKeywords(cleanedTitle, 3);\nconst titleLength = cleanedTitle.length;\nconst bodyLength = shortBody.length;\nconst status = titleLength > 50 ? 'needs_review' : 'processed';\n\nconst tags = ['processed'];\nif (cleanedBody.includes('et')) tags.push('latin');\nif (titleLength > 30) tags.push('long_title');\n\nconst result = {\n  [recordKey]: {\n    record_id: recordId,\n    content: {\n      title: cleanedTitle,\n      body: shortBody,\n      word_count: wordCount,\n      category,\n      keywords\n    },\n    metadata: {\n      original_id: id,\n      processed_date: (new Date()).toISOString().split('T')[0],\n      status,\n      tags,\n      processing_steps: [\n        'title_cleaned',\n        'body_truncated',\n        'keywords_extracted',\n        'category_assigned'\n      ]\n    },\n    analytics: {\n      title_length: titleLength,\n      body_length: bodyLength,\n      has_long_title: titleLength > 30,\n      common_words: ['the', 'and', 'of']\n    }\n  }\n};\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        416
+      ],
+      "id": "ad973d84-e813-4dbc-b24e-e0b83eed7abe",
+      "name": "Posts Normalization"
+    },
+    {
+      "parameters": {
+        "jsCode": "function getKeywords(text, n) {\n  return text\n    .split(/\\s+/)\n    .slice(0, n)\n    .map(word => word.toLowerCase());\n}\n\nconst comments = items.map(item => item.json);\n\nconst groupedComments = {};\n\nfor (const comment of comments) {\n  const body = comment.body || '';\n  const shortBody = body.length > 50 ? body.slice(0, 50) + '...' : body;\n  const keywords = getKeywords(body, 2);\n  const status = body.includes('dolor') ? 'invalid' : 'valid';\n\n  const processed = {\n    comment_id: comment.id,\n    email: comment.email,\n    short_body: shortBody,\n    body_length: body.length,\n    status,\n    keywords\n  };\n\n  const postKey = `POST_${String(comment.postId).padStart(3, '0')}_COMMENTS`;\n  if (!groupedComments[postKey]) groupedComments[postKey] = [];\n  groupedComments[postKey].push(processed);\n}\n\n// Return as a single item with grouped structure\nreturn [{ json: groupedComments }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        208
+      ],
+      "id": "5bbcc111-7a81-4d09-ba54-70e808b56cf2",
+      "name": "Comments Normalization"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Comments": {
+      "main": [
+        [
+          {
+            "node": "Comments Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Get Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Posts": {
+      "main": [
+        [
+          {
+            "node": "Posts Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Posts Normalization": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comments Normalization": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fa607c5f-3e20-4352-9da5-ae001b94e413",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "61608cb2017fdfa143c3657cdf343566ae55502a462dce346cf27a71f9adfdf8"
+  },
+  "id": "q14BCMHut2Qmwj27",
+  "tags": []
+}
