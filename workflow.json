@@ -9,10 +9,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        880,
-        224
+        544,
+        112
       ],
-      "id": "70f91fec-62b0-4b16-9d63-1418971969f7",
+      "id": "aabcfec2-bd24-4fbd-82cb-f391514897c4",
       "name": "Get Comments",
       "retryOnFail": true,
       "maxTries": 2,
@@ -26,10 +26,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        656,
-        208
+        320,
+        96
       ],
-      "id": "ed1a3074-3bad-4dad-8f91-21faa8c14b0b",
+      "id": "b79b48c9-4410-4216-a8e0-86b51976fe2f",
       "name": "Loop Over Items"
     },
     {
@@ -42,10 +42,10 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        416,
-        208
+        80,
+        96
       ],
-      "id": "b58925db-25ce-43a6-ba1c-33e6a3b18ecf",
+      "id": "ced33dd3-5f54-4999-b124-aaa774cd9770",
       "name": "Split Out"
     },
     {
@@ -65,10 +65,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        208,
-        208
+        -128,
+        96
       ],
-      "id": "598aecbc-3303-4fad-8660-1f119391b29c",
+      "id": "c2df14be-a2ce-4b8b-b6cc-442b151204b6",
       "name": "Edit Fields"
     },
     {
@@ -76,10 +76,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        208
+        -336,
+        96
       ],
-      "id": "f0eb457b-2c72-4db5-a596-7cd6811bcce3",
+      "id": "64e54e40-4067-40ae-bc4f-01e5c7e6f056",
       "name": "When clicking ‘Execute workflow’"
     },
     {
@@ -89,10 +89,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        656,
-        416
+        320,
+        304
       ],
-      "id": "e4698101-1aad-43c6-ae6a-4fe823c0d461",
+      "id": "56d6ec91-bf60-4306-8732-f56aecb96f08",
       "name": "Loop Over Items1"
     },
     {
@@ -112,10 +112,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        880,
-        432
+        544,
+        320
       ],
-      "id": "19e5a49b-9543-4631-9f80-d7b49a668759",
+      "id": "b62da670-bad9-48fc-991a-16a111ab3106",
       "name": "Get Posts",
       "retryOnFail": true,
       "maxTries": 2,
@@ -126,25 +126,12 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1392,
-        208
+        1056,
+        96
       ],
-      "id": "32905340-4622-424d-850b-a15217072730",
+      "id": "2cac8d66-2983-4a8c-ba76-07809735dbf9",
       "name": "Merge",
       "alwaysOutputData": false
-    },
-    {
-      "parameters": {
-        "jsCode": "\nconst comments = {};\nconst details = {};\n\n$input.all().forEach(item => {\n    const pureItem = item.json;\n    const [fullKey] = Object.keys(pureItem);\n    const parts = fullKey.split('_');\n    const prefix = parts.slice(0, 2).join('_');\n    const postfix = parts[2]; // either COMMENTS or DETAILS\n\n    if (postfix === 'COMMENTS') {\n        comments[prefix] = pureItem[fullKey];\n    } else if (postfix === 'DETAILS') {\n        details[prefix] = { ...pureItem[fullKey] };\n    }\n});\n\nconst result = Object.entries(details).map(([prefix, detailData]) => {\n    if (comments[prefix]) {\n        detailData.comments = comments[prefix];\n    }\n    return detailData;\n});\nconsole.log('ssss',result);\nreturn result;"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1392,
-        416
-      ],
-      "id": "4ee7db1b-fa02-4256-b559-d0c98704e23f",
-      "name": "Code2"
     },
     {
       "parameters": {
@@ -235,16 +222,16 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        1568,
-        416
+        1248,
+        304
       ],
-      "id": "4cd41b59-c6ec-4470-aa77-f2a0a6c6347f",
+      "id": "3686d021-fa6c-4604-90f0-b0936a8452dc",
       "name": "Append or update row in sheet",
       "retryOnFail": false,
       "maxTries": 2,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "*******",
+          "id": "7sByC4Covg97XTgE",
           "name": "Google Sheets account"
         }
       },
@@ -257,10 +244,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1168,
-        416
+        832,
+        304
       ],
-      "id": "ad973d84-e813-4dbc-b24e-e0b83eed7abe",
+      "id": "e29952a0-dfa9-4c79-bb39-0a4613e67e41",
       "name": "Posts Normalization"
     },
     {
@@ -270,11 +257,24 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1168,
-        208
+        832,
+        96
       ],
-      "id": "5bbcc111-7a81-4d09-ba54-70e808b56cf2",
+      "id": "b63f2fec-7c0c-4c40-bcf6-3032d7f98506",
       "name": "Comments Normalization"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst comments = {};\nconst details = {};\n\n$input.all().forEach(item => {\n    const pureItem = item.json;\n    const [fullKey] = Object.keys(pureItem);\n    const parts = fullKey.split('_');\n    const prefix = parts.slice(0, 2).join('_');\n    const postfix = parts[2]; // either COMMENTS or DETAILS\n\n    if (postfix === 'COMMENTS') {\n        comments[prefix] = pureItem[fullKey];\n    } else if (postfix === 'DETAILS') {\n        details[prefix] = { ...pureItem[fullKey] };\n    }\n});\n\nconst result = Object.entries(details).map(([prefix, detailData]) => {\n    if (comments[prefix]) {\n        detailData.comments = comments[prefix];\n    }\n    return detailData;\n});\nconsole.log('ssss',result);\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        304
+      ],
+      "id": "c5e7ad51-e52b-4c3e-a4af-86f0ad9a0e35",
+      "name": "Combine Comments & Posts"
     }
   ],
   "pinData": {},
@@ -379,18 +379,7 @@
       "main": [
         [
           {
-            "node": "Code2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code2": {
-      "main": [
-        [
-          {
-            "node": "Append or update row in sheet",
+            "node": "Combine Comments & Posts",
             "type": "main",
             "index": 0
           }
@@ -413,6 +402,17 @@
         [
           {
             "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Comments & Posts": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
             "type": "main",
             "index": 0
           }
